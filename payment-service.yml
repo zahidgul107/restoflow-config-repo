@@ -1,0 +1,57 @@
+server:
+  port: ${PAYMENT_SERVICE_PORT:8085}
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3307/restoflow?allowPublicKeyRetrieval=true&useSSL=false
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
+  flyway:
+    locations: classpath:db/migration
+    table: flyway_schema_history_payment
+    baseline-on-migrate: true
+    baseline-version: 0
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+# Secrets come from env vars with no inline default, so the service fails fast if one is missing.
+stripe:
+  api:
+    secretKey: ${STRIPE_SECRET_KEY}
+  webhook:
+    signingSecret: ${STRIPE_WEBHOOK_SIGNING_SECRET}
+  connect:
+    returnUrl: ${STRIPE_CONNECT_RETURN_URL:http://localhost:5174/payments?onboarding=return}
+    refreshUrl: ${STRIPE_CONNECT_REFRESH_URL:http://localhost:5174/payments}
+    webhook:
+      signingSecret: ${STRIPE_CONNECT_WEBHOOK_SIGNING_SECRET}
+
+razorpay:
+  mode: ${RAZORPAY_MODE:STANDARD}   # STANDARD | ROUTE
+  keyId: ${RAZORPAY_KEY_ID}
+  keySecret: ${RAZORPAY_KEY_SECRET}
+  route:
+    returnUrl: ${RAZORPAY_ROUTE_RETURN_URL:http://localhost:5174/settings/payments}
+    webhook:
+      signingSecret: ${RAZORPAY_ROUTE_WEBHOOK_SIGNING_SECRET}
+  payment-link:
+    expire-minutes: ${RAZORPAY_PAYMENT_LINK_EXPIRE_MINUTES:60}
+
+refund:
+  sweep-interval-ms: 1800000     # 30 minutes
+  pending-max-age-ms: 900000     # 15 minutes
+
+# Diner-facing SPA origin: used to build Stripe return URLs and to allowlist
+# client-supplied return URLs. Not a secret.
+app:
+  frontend:
+    base-url: ${FRONTEND_BASE_URL:http://192.168.1.6:5173}
+
+logging:
+  level:
+    com.restoflow.payment: DEBUG   # use your real base package

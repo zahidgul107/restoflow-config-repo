@@ -1,0 +1,63 @@
+build:
+  version: "1.0"
+
+server:
+  port: 8085
+  
+payment-service:
+  message: "Welcome to EazyBank accounts related docker APIs "
+  contactDetails:
+    name: "John Doe - Developer"
+    email: "john@eazybank.com"
+  onCallSupport:
+    - (555) 555-1234
+    - (555) 523-1345
+
+spring:
+  application:
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+# Stripe configuration. Secrets are supplied via environment variables and are
+# never committed as literals (Decision 023): the ${VAR} placeholders have no
+# inline default, so the service fails fast at startup if a secret is absent. The
+# developer exports STRIPE_SECRET_KEY / STRIPE_WEBHOOK_SIGNING_SECRET before
+# starting payment-service.
+stripe:
+  api:
+    secretKey: ${STRIPE_SECRET_KEY}
+  webhook:
+    signingSecret: ${STRIPE_WEBHOOK_SIGNING_SECRET}
+  connect:
+    returnUrl: ${STRIPE_CONNECT_RETURN_URL:http://localhost:5174/payments?onboarding=return}
+    refreshUrl: ${STRIPE_CONNECT_REFRESH_URL:http://localhost:5174/payments}
+    webhook:
+      signingSecret: ${STRIPE_CONNECT_WEBHOOK_SIGNING_SECRET}
+
+# Razorpay configuration (for IN tenants)
+razorpay:
+  mode: ${RAZORPAY_MODE:STANDARD} # STANDARD | ROUTE
+  keyId: ${RAZORPAY_KEY_ID}
+  keySecret: ${RAZORPAY_KEY_SECRET}
+  route:
+    returnUrl: ${RAZORPAY_ROUTE_RETURN_URL:http://localhost:5174/settings/payments}
+    webhook:
+      signingSecret: ${RAZORPAY_ROUTE_WEBHOOK_SIGNING_SECRET}
+  payment-link:
+    expire-minutes: ${RAZORPAY_PAYMENT_LINK_EXPIRE_MINUTES:60}
+
+# Refund configuration
+refund:
+  sweep-interval-ms: 1800000 # 30 minutes in milliseconds
+  pending-max-age-ms: 900000 # 15 minutes in milliseconds
+
+# Diner-facing single-page app origin. Used to build the default Stripe
+# success/cancel return URLs and to allowlist any client-supplied return URLs
+# (so the hosted checkout can only redirect back into the SPA, never off-site).
+# Not a secret, so an inline default is fine; override with FRONTEND_BASE_URL when
+# the SPA is served from another origin (e.g. an ngrok tunnel or a deployed host).
+app:
+  frontend:
+    base-url: ${FRONTEND_BASE_URL:http://192.168.1.6:5173}

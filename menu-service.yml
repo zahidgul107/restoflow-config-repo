@@ -1,0 +1,20 @@
+server:
+  port: ${MENU_SERVICE_PORT:8083}
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3307/restoflow?allowPublicKeyRetrieval=true&useSSL=false
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
+  flyway:
+    locations: classpath:db/migration
+    table: flyway_schema_history_menu
+    baseline-on-migrate: true
+    baseline-version: 0
+
+logging:
+  level:
+    com.restoflow.menu: DEBUG   # use your real base package

@@ -1,0 +1,129 @@
+server:
+  port: ${API_GATEWAY_PORT:8080}
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+
+info:
+  app:
+    description: RestoFlow API Gateway
+
+logging:
+  level:
+    com.restoflow.gateway: DEBUG   # your real base package
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,refresh,gateway
+  endpoint:
+    gateway:
+      enabled: true
+
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - http://localhost:5173
+              - http://localhost:5174
+              - http://192.168.1.6:5173
+              - http://192.168.1.6:5174
+              - https://7467-2401-4900-8fd6-e88d-ace2-73d8-7208-708d.ngrok-free.app
+            allowedMethods: [GET, POST, PUT, PATCH, DELETE, OPTIONS]
+            allowedHeaders: ["*"]
+            allowCredentials: false
+            maxAge: 3600
+      routes:
+        - id: identity-auth
+          uri: lb://identity-service
+          predicates: [ "Path=/api/v1/auth/**" ]
+          filters: [ "StripPrefix=2" ]
+        - id: identity-admin
+          uri: lb://identity-service
+          predicates: [ "Path=/api/v1/admin/**" ]
+          filters: [ "StripPrefix=2" ]
+        - id: identity-users
+          uri: lb://identity-service
+          predicates: [ "Path=/api/v1/users/**" ]
+          filters: [ "StripPrefix=2" ]
+
+        - id: order-service-merchant-status
+          uri: lb://order-service
+          predicates: [ "Path=/api/v1/restaurants/*/orders/*/status" ]
+          filters: [ "StripPrefix=2" ]
+        - id: order-service-merchant-orders
+          uri: lb://order-service
+          predicates: [ "Path=/api/v1/restaurants/*/orders" ]
+          filters: [ "StripPrefix=2" ]
+        - id: order-service-merchant-order-detail
+          uri: lb://order-service
+          predicates: [ "Path=/api/v1/restaurants/*/orders/*" ]
+          filters: [ "StripPrefix=2" ]
+        - id: order-service-merchant-stats
+          uri: lb://order-service
+          predicates: [ "Path=/api/v1/restaurants/*/stats,/api/v1/restaurants/*/stats/**" ]
+          filters: [ "StripPrefix=2" ]
+
+        - id: payment-service-onboarding-start
+          uri: lb://payment-service
+          predicates: [ "Path=/api/v1/restaurants/*/payment-onboarding/start" ]
+          filters: [ "StripPrefix=2" ]
+        - id: payment-service-onboarding-status
+          uri: lb://payment-service
+          predicates: [ "Path=/api/v1/restaurants/*/payment-onboarding/status" ]
+          filters: [ "StripPrefix=2" ]
+
+        - id: restaurant-service-authenticated
+          uri: lb://restaurant-service
+          predicates: [ "Path=/api/v1/restaurants/**" ]
+          filters: [ "StripPrefix=2" ]
+
+        - id: menu-service-public
+          uri: lb://menu-service
+          predicates: [ "Path=/api/v1/public/restaurants/*/menu" ]
+          filters: [ "StripPrefix=2" ]
+        - id: order-service-checkout
+          uri: lb://payment-service
+          predicates: [ "Path=/api/v1/public/orders/*/checkout-session" ]
+          filters: [ "StripPrefix=2" ]
+        - id: order-service-public-order
+          uri: lb://order-service
+          predicates: [ "Path=/api/v1/public/orders/*" ]
+          filters: [ "StripPrefix=2" ]
+        - id: order-service-public-order-history
+          uri: lb://order-service
+          predicates: [ "Path=/api/v1/public/orders" ]
+          filters: [ "StripPrefix=2" ]
+
+        - id: payment-service-connect-webhook
+          uri: lb://payment-service
+          predicates: [ "Path=/api/v1/public/payments/connect-webhook" ]
+          filters: [ "StripPrefix=2" ]
+        - id: payment-service-webhook
+          uri: lb://payment-service
+          predicates: [ "Path=/api/v1/public/payments/webhook" ]
+          filters: [ "StripPrefix=2" ]
+        - id: payment-service-razorpay-webhook
+          uri: lb://payment-service
+          predicates: [ "Path=/api/v1/public/payments/razorpay-webhook" ]
+          filters: [ "StripPrefix=2" ]
+
+        - id: order-service-public
+          uri: lb://order-service
+          predicates: [ "Path=/api/v1/public/restaurants/*/orders" ]
+          filters: [ "StripPrefix=2" ]
+        - id: restaurant-service-public
+          uri: lb://restaurant-service
+          predicates: [ "Path=/api/v1/public/restaurants/**" ]
+          filters: [ "StripPrefix=2" ]
+
+        - id: menu-service-authenticated
+          uri: lb://menu-service
+          predicates: [ "Path=/api/v1/menu-items/**" ]
+          filters: [ "StripPrefix=2" ]

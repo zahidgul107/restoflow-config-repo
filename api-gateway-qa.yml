@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - ${FRONTEND_ORIGIN}
+logging:
+  level:
+    com.restoflow.gateway: INFO

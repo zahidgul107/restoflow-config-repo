@@ -1,0 +1,22 @@
+build:
+  version: "1.0"
+  
+server:
+  port: ${IDENTITY_SERVICE_PORT:8081}
+
+identity-service:
+  message: "Welcome to EazyBank accounts related docker APIs "
+  contactDetails:
+    name: "John Doe - Developer"
+    email: "john@eazybank.com"
+  onCallSupport:
+    - (555) 555-1234
+    - (555) 523-1345
+
+# JWT Configuration — shared secret, safe to centralize since
+# api-gateway also needs the exact same value to validate tokens
+app:
+  jwt:
+    secret: 4PmYhgZ/x+Ao9+R15rK2bDCF3zg1gB2csLayjLrr0Nc=
+    access-token-expiry-minutes: 15
+    refresh-token-expiry-days: 30
