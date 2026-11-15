@@ -50,7 +50,7 @@ refund:
 # client-supplied return URLs. Not a secret.
 app:
   frontend:
-    base-url: ${FRONTEND_BASE_URL:http://192.168.1.6:5173}
+    base-url: ${FRONTEND_BASE_URL}
 
 logging:
   level:

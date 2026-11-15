@@ -60,4 +60,4 @@ refund:
 # the SPA is served from another origin (e.g. an ngrok tunnel or a deployed host).
 app:
   frontend:
-    base-url: ${FRONTEND_BASE_URL:http://192.168.1.6:5173}
+    base-url: ${FRONTEND_BASE_URL}

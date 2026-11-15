@@ -6,3 +6,6 @@ eureka:
 spring:
   datasource:
     url: jdbc:mysql://mysql:3306/restoflow?allowPublicKeyRetrieval=true&useSSL=false
+  data:
+    redis:
+      host: redis
