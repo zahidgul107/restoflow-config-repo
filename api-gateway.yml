@@ -38,6 +38,8 @@ spring:
               - https://130.210.20.40.sslip.io
               - https://app.130.210.20.40.sslip.io
               - https://admin.130.210.20.40.sslip.io
+              - https://platform.130.210.20.40.sslip.io
+              - http://localhost:5175
             allowedMethods: [GET, POST, PUT, PATCH, DELETE, OPTIONS]
             allowedHeaders: ["*"]
             allowCredentials: false
@@ -130,3 +132,8 @@ spring:
           uri: lb://menu-service
           predicates: [ "Path=/api/v1/menu-items/**" ]
           filters: [ "StripPrefix=2" ]
+          
+        - id: identity-platform
+          uri: lb://identity-service
+          predicates: [ "Path=/api/v1/platform/**" ]
+          filters: [ "StripPrefix=2" ]          
