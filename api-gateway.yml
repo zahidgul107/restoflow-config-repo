@@ -37,6 +37,7 @@ spring:
               - https://7467-2401-4900-8fd6-e88d-ace2-73d8-7208-708d.ngrok-free.app
               - https://130.210.20.40.sslip.io
               - https://app.130.210.20.40.sslip.io
+              - https://orders.130.210.20.40.sslip.io
               - https://admin.130.210.20.40.sslip.io
               - https://platform.130.210.20.40.sslip.io
               - http://localhost:5175
