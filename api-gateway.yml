@@ -40,6 +40,7 @@ spring:
               - https://admin.130.210.20.40.sslip.io
               - https://platform.130.210.20.40.sslip.io
               - http://localhost:5175
+              - http://localhost:1001
             allowedMethods: [GET, POST, PUT, PATCH, DELETE, OPTIONS]
             allowedHeaders: ["*"]
             allowCredentials: false
@@ -136,4 +137,9 @@ spring:
         - id: identity-platform
           uri: lb://identity-service
           predicates: [ "Path=/api/v1/platform/**" ]
-          filters: [ "StripPrefix=2" ]          
+          filters: [ "StripPrefix=2" ] 
+          
+        - id: identity-public-signup
+          uri: lb://identity-service
+          predicates: [ "Path=/api/v1/public/signup-requests,/api/v1/public/signup-requests/**" ]
+          filters: [ "StripPrefix=2" ]         
